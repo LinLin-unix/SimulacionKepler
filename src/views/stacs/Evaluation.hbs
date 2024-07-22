@@ -1,0 +1,20 @@
+<div id="popup" class="popup">
+  <div class="popup-content">
+    <div class="form-section">
+      <h1>Resultado de la Evaluación</h1>
+      <p>Tu puntaje total es: {{totalScore}} / 20</p>
+      <p>Tiempo empleado: {{timeTaken}} segundos</p>
+      <p>Precisión: {{precision}}%</p>
+      <p>Comprensión: {{comprehension}}%</p>
+      <p>Retroalimentación: {{feedback}}</p>
+      <p>¡Gracias por participar!</p>
+    </div>
+    <button id="btnAceptar" type="submit">Aceptar</button>
+  </div>
+</div>
+
+<script>
+  document.getElementById("btnAceptar").addEventListener("click", function() {
+    window.location.href = "/";
+  });
+</script>

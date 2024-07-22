@@ -1,0 +1,64 @@
+<div id="edit-popup" class="popup">
+    <div class="popup-content edit-content">
+        <div class="card text-center">
+            <div id="back-icon" class="back-icon">
+                <a href="/admin/users/index" class="btn btn-secondary btn-icon">
+                    <i class="fa fa-arrow-left"></i>
+                </a>
+            </div>
+
+            <div class="card-header">
+                <h3>¿Seguro que quieres eliminar a {{user.username}}?</h3>
+            </div>
+            <div class="card-body">
+                <div class="image-container">
+                    <img src="/public/img/alert.jpg" alt="Alert" class="rounded-circle my-3" style="width: 150px;">
+                </div>
+                <form action="/admin/users/edit/{{user._id}}" method="POST">
+                    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+                    <div class="button-container">
+                        <button class="btn btn-primary" type="submit">Aceptar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style>
+    .btn-icon {
+        padding: 8px;
+        border-radius: 50%;
+        text-align: center;
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #6c757d;
+        /* Color de fondo */
+        color: white;
+        /* Color del ícono */
+        font-size: 18px;
+        border: none;
+    }
+
+    .btn-icon:hover {
+        background-color: #5a6268;
+        /* Color de fondo al pasar el ratón */
+        text-decoration: none;
+    }
+</style>
+
+<script>
+    function closeAlert(element) {
+        const alert = element.parentElement;
+        alert.style.opacity = '0';
+        setTimeout(() => {
+            alert.remove();
+        }, 500);
+    }
+</script>

@@ -1,0 +1,151 @@
+<div id="admin-dashboard-popup" class="popup">
+    <div class="popup-content signup-content">
+        <div class="card text-center">
+            <div class="card-header">
+                <h2>Bienvenido Administrador</h2>
+            </div>
+            <div class="card-body">
+                <div class="button-container">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownUsers" data-bs-toggle="dropdown" aria-expanded="false">
+                            Gestionar Usuarios
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownUsers">
+                            <li><a class="dropdown-item" href="/admin/users/create">Crear Usuario</a></li>
+                            <li><a class="dropdown-item" href="/admin/users/index">Listar Usuarios</a></li>
+                        </ul>
+                    </div>
+                    <a href="/admin/stats" class="btn btn-primary">Ver Estadísticas</a>
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownReports" data-bs-toggle="dropdown" aria-expanded="false">
+                            Ver Reportes
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownReports">
+                            <li><a class="dropdown-item" href="/admin/reports/users">Usuarios Registrados</a></li>
+                            <li><a class="dropdown-item" href="/admin/reports/scores">Mejores Notas</a></li>
+                            <li><a class="dropdown-item" href="/admin/reports/suggs">Sugerencias</a></li>
+                            <li><a class="dropdown-item" href="/admin/reports/remove">Usuarios Eliminados</a></li>
+                        </ul>
+                    </div>
+                    <a href="/users/logout" class="btn btn-primary">Salir</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="admin-content">
+            {{{body}}}
+        </div>
+    </div>
+</div>
+<style>
+
+/* Estilos generales */
+#admin-dashboard-popup .popup-content {
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+#admin-dashboard-popup .card {
+  border: none;
+  box-shadow: none;
+  padding: 50px;
+}
+
+#admin-dashboard-popup .card-header {
+  color: #fff;
+}
+
+#admin-dashboard-popup .card-header h2 {
+  margin: 0;
+  font-size: 28px;
+}
+
+#admin-dashboard-popup .card-body {
+  padding: 20px;
+  max-width: 90%;
+}
+
+#admin-dashboard-popup .button-container {
+  margin-top: 10px;
+  text-align: left; /* Cambiado a left */
+}
+
+#admin-dashboard-popup .button-container .btn {
+  margin: 0 0 10px 0; /* Cambia el margen a solo superior e inferior */
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: bold;
+  cursor: pointer;
+  width: 80%; /* Asegura el ancho completo */
+  box-sizing: border-box; /* Incluye el padding en el ancho */
+}
+
+#admin-dashboard-popup .button-container .btn:hover {
+  background-color: #0056b3;
+}
+
+#admin-dashboard-popup #admin-content {
+  margin-top: 20px;
+}
+
+/* Estilos específicos */
+#admin-dashboard-popup .button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start; /* Asegura la alineación a la izquierda */
+}
+
+#admin-dashboard-popup .btn,
+#admin-dashboard-popup .dropdown button {
+    width: 100%; /* Mantén el ancho completo */
+    text-align: left; /* Alinea el texto a la izquierda */
+    box-sizing: border-box; /* Incluye el padding en el ancho */
+}
+
+#admin-dashboard-popup .dropdown {
+    position: relative;
+    width: 100%;
+}
+
+#admin-dashboard-popup .dropdown-menu {
+    position: absolute;
+    background-color: transparent;
+    box-shadow: 0px 8px 16px 0px rgba(255, 255, 255, 0.2);
+    z-index: 1;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    top: 0;
+    left: calc(100% - 40px); /* Espacio adicional hacia la derecha */
+    display: none;
+    white-space: nowrap; /* Evitar que el texto se rompa en varias líneas */
+    border-radius: 4px; /* Esquinas redondeadas */
+    overflow: hidden; /* Para asegurar que los elementos no se salgan de los bordes */
+    min-width: 100px; /* Ajusta este valor según tus necesidades */
+    /* Puedes usar width en lugar de min-width para un ancho fijo */
+}
+
+#admin-dashboard-popup .dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+#admin-dashboard-popup .dropdown-menu li {
+    padding: 2px 8px;
+}
+
+#admin-dashboard-popup .dropdown-menu li a {
+    text-decoration: none;
+    color: #ffffff;
+    display: block;
+}
+
+#admin-dashboard-popup .dropdown-menu li a:hover {
+    background-color: #3498db;
+}
+</style>

@@ -1,0 +1,51 @@
+<div id="popup" class="popup">
+  <div class="popup-content">
+    <h1>Estadísticas del Usuario</h1>
+    <form id="searchForm" action="/stacs/search" method="POST">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <label for="username">Ingresa el nombre del usuario:</label>
+      <input type="text" id="username" name="username" required style="color: #000000;">
+      <button type="submit">Buscar</button>
+    </form>
+    {{#if username}}
+      {{#if bestScores.length}}
+        <table id="tablaMejoresPuntuaciones">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Mejor puntuación</th>
+              <th>Tiempo empleado</th>
+              <th>Precisión</th>
+              <th>Comprensión</th>
+              <th>Retroalimentación</th>
+              <th>Número de intentos</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each bestScores}}
+              <tr>
+                <td>{{user}}</td>
+                <td>{{bestScore.totalScore}}</td>
+                <td>{{bestScore.timeTaken}}</td>
+                <td>{{bestScore.precision}} %</td>
+                <td>{{bestScore.comprehension}} %</td>
+                <td>{{bestScore.feedback}}</td>
+                <td>{{bestScore.attempts}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      {{else}}
+        <p>No se encontraron estadísticas para el usuario {{ username }}</p>
+      {{/if}}
+    {{/if}}
+    <br>
+    <button class="close-btn" id="CloseSearch">Cerrar</button>
+  </div>
+</div>
+
+<script>
+  document.getElementById("CloseSearch").addEventListener("click", function() {
+    window.location.href = "/";
+  });
+</script>

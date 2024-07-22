@@ -1,0 +1,89 @@
+<div id="signup-popup" class="popup">
+  <div class="popup-content signup-content">
+    <div class="card text-center">
+      <div id="back-icon" class="back-icon">
+        <a href="/admin/dashboard" class="btn btn-secondary btn-icon">
+          <i class="fa fa-arrow-left"></i>
+        </a>
+      </div>
+      <div class="card-header">
+        <h2>Reporte de Notas</h2>
+      </div>
+      <div class="card-body">
+        <form action="/admin/reports/scores/filter" method="POST">
+          <input type="hidden" name="_csrf" value="{{csrfToken}}">
+          <label for="score-filter">Filtrar por Nota Máxima:</label>
+          <select id="score-filter" name="score" style="color: #004cff;" onchange="this.form.submit()">
+            <option value="">Selecciona una nota</option>
+            {{#range 0 20}}
+              <option value="{{this}}" {{#ifCond this ../selectedScore '==='}}selected{{/ifCond}}>{{this}}</option>
+            {{/range}}
+          </select>
+        </form>
+        
+        {{#if scores.length}}
+          <table class="table mt-4" id="tablaMejoresPuntuaciones">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Correo</th>
+                <th>Mejor Nota</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each scores}}
+                <tr>
+                  <td>{{this.username}}</td>
+                  <td>{{this.email}}</td>
+                  <td>{{this.maxScore}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        {{else}}
+          <div id="no-results">No se encontraron usuarios con esa nota máxima</div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    .btn-icon {
+        padding: 8px;
+        border-radius: 50%;
+        text-align: center;
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #6c757d;
+        /* Color de fondo */
+        color: white;
+        /* Color del ícono */
+        font-size: 18px;
+        border: none;
+    }
+
+    .btn-icon:hover {
+        background-color: #5a6268;
+        /* Color de fondo al pasar el ratón */
+        text-decoration: none;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const scoreFilter = document.getElementById("score-filter");
+    scoreFilter.addEventListener("change", function() {
+      this.form.submit();
+    });
+  });
+</script>

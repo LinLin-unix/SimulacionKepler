@@ -1,0 +1,231 @@
+<div class="container">
+  <div id="back-icon" class="back-icon">
+    <a href="/admin/dashboard" class="btn btn-secondary btn-icon">
+      <i class="fa fa-arrow-left"></i>
+    </a>
+  </div>
+
+  <h2>Estadísticas sobre Resultados en las Calificaciones</h2>
+  <div class="charts-row">
+    <div class="chart-container">
+      <h3>Resultados Diarios</h3>
+      <canvas id="dailyResultsChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <h3>Resultados Semanales</h3>
+      <canvas id="weeklyResultsChart"></canvas>
+    </div>
+  </div>
+  <div class="charts-row">
+    <div class="chart-container">
+      <h3>Resultados del Semestre</h3>
+      <canvas id="semesterResultsChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style>
+  .btn-icon {
+    padding: 8px;
+    border-radius: 50%;
+    text-align: center;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #6c757d;
+    /* Color de fondo */
+    color: white;
+    /* Color del ícono */
+    font-size: 18px;
+    border: none;
+  }
+
+  .btn-icon:hover {
+    background-color: #5a6268;
+    /* Color de fondo al pasar el ratón */
+    text-decoration: none;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    z-index: 9999;
+
+  }
+
+  .charts-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    background-color: transparent;
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  .chart-container {
+    width: 45%;
+    min-width: 300px;
+    margin: 10px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: transparent;
+    z-index: 2;
+    position: relative;
+    overflow: auto;
+  }
+
+  h3 {
+    text-align: center;
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Datos para gráficos
+    const dailyResults = {{{ json dailyResults }}};
+  const weeklyResults = {{{ json weeklyResults }}};
+  const semesterResults = {{{ json semesterResults }}};
+
+  // Función para extraer datos de resultados
+  function extractData(results) {
+    return {
+      users: results.map(r => r.user.username),
+      scores: results.map(r => r.totalScore),
+      times: results.map(r => r.timeTaken),
+    };
+  }
+
+  // Datos para gráficos
+  const dailyData = extractData(dailyResults);
+  const weeklyData = extractData(weeklyResults);
+  const semesterData = extractData(semesterResults);
+
+  // Configuración del gráfico de resultados diarios
+  const dailyChartCtx = document.getElementById('dailyResultsChart').getContext('2d');
+  new Chart(dailyChartCtx, {
+    type: 'bar',
+    data: {
+      labels: dailyData.users,
+      datasets: [{
+        label: 'Puntaje Diario',
+        data: dailyData.scores,
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Puntaje'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Usuarios'
+          }
+        }
+      }
+    }
+  });
+
+  // Configuración del gráfico de resultados semanales
+  const weeklyChartCtx = document.getElementById('weeklyResultsChart').getContext('2d');
+  new Chart(weeklyChartCtx, {
+    type: 'line',
+    data: {
+      labels: weeklyData.users,
+      datasets: [{
+        label: 'Puntaje Semanal',
+        data: weeklyData.scores,
+        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+        borderColor: 'rgba(153, 102, 255, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Puntaje'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Usuarios'
+          }
+        }
+      }
+    }
+  });
+
+  // Configuración del gráfico de resultados del semestre (bubble chart)
+  const semesterChartCtx = document.getElementById('semesterResultsChart').getContext('2d');
+  new Chart(semesterChartCtx, {
+    type: 'bubble',
+    data: {
+      labels: semesterData.users,
+      datasets: [{
+        label: 'Puntaje Semestral',
+        data: semesterData.scores.map((score, index) => ({
+          x: index,
+          y: score,
+          r: Math.sqrt(score) * 5  // Tamaño de la burbuja basado en el puntaje, ajusta según tus datos
+        })),
+        backgroundColor: 'rgba(90, 200, 250, 0.6)', // Color celeste para las burbujas con transparencia
+        borderColor: 'rgba(90, 200, 250, 1)', // Borde del mismo color pero completamente sólido
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        x: {
+          type: 'linear',
+          position: 'bottom',
+          title: {
+            display: true,
+            text: 'Usuarios'
+          }
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Puntaje'
+          }
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              const label = context.dataset.label || '';
+              if (label) {
+                return label + ': (' + context.raw.x + ', ' + context.raw.y + ')';
+              }
+              return '(' + context.raw.x + ', ' + context.raw.y + ')';
+            }
+          }
+        }
+      }
+    }
+  });
+});
+
+</script>

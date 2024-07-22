@@ -1,0 +1,172 @@
+<div id="popup" class="popup">
+  <div class="popup-content">
+
+    <div id="timer" style="float: right; margin-top: 20px; margin-right: 20px;">Tiempo restante: 10:00</div>
+
+    <form id="popupForm" class="popup-form" method="POST" action="/calcification-form">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <input type="hidden" id="startTime" name="startTime" value="">
+      <input type="hidden" id="finishTime" name="finishTime" value="">
+      
+      <div class="form-section">
+        <h2>Preguntas sobre las Leyes de Kepler</h2>
+
+        <!-- Pregunta 1 -->
+        <label for="question1">1. ¿Qué forma tiene la órbita de un planeta alrededor del Sol según la Primera Ley de Kepler?</label>
+        <select id="question1" name="question1">
+          <option value="">Seleccione una opción</option>
+          <option value="V1">Elíptica</option>
+          <option value="F">Circular</option>
+          <option value="F">Parabólica</option>
+          <option value="F">Hipérbolica</option>
+        </select>
+
+        <!-- Pregunta 2 -->
+        <label for="question2">2. ¿Dónde se encuentra el Sol en la órbita de un planeta?</label>
+        <select id="question2" name="question2">
+          <option value="">Seleccione una opción</option>
+          <option value="F">En el centro de la elipse</option>
+          <option value="V2">En uno de los focos de la elipse</option>
+          <option value="F">En el borde de la elipse</option>
+          <option value="F">Fuera de la elipse</option>
+        </select>
+
+        <!-- Pregunta 3 -->
+        <label for="question3">3. Según la Segunda Ley de Kepler, ¿cómo varía la velocidad de un planeta en su órbita?</label>
+        <select id="question3" name="question3">
+          <option value="">Seleccione una opción</option>
+          <option value="F">La velocidad es constante</option>
+          <option value="V3">El planeta se mueve más rápido cuando está más cerca del Sol</option>
+          <option value="F">El planeta se mueve más lento cuando está más cerca del Sol</option>
+          <option value="F">La velocidad no depende de la distancia al Sol</option>
+        </select>
+
+        <!-- Pregunta 4 -->
+        <label for="question4">4. Según la Segunda Ley de Kepler, ¿qué área barre el radio vector que une un planeta con el Sol en tiempos iguales?</label>
+        <select id="question4" name="question4">
+          <option value="">Seleccione una opción</option>
+          <option value="F">Áreas diferentes</option>
+          <option value="V4">Áreas iguales</option>
+          <option value="F">No barre ninguna área</option>
+          <option value="F">Depende de la órbita del planeta</option>
+        </select>
+
+        <!-- Pregunta 5 -->
+        <label for="question5">5. Según la Tercera Ley de Kepler, ¿cómo se relacionan el período orbital y la distancia media al Sol de un planeta?</label>
+        <select id="question5" name="question5">
+          <option value="">Seleccione una opción</option>
+          <option value="F">El período orbital es proporcional a la distancia media al Sol</option>
+          <option value="F">El período orbital es proporcional al cuadrado de la distancia media al Sol</option>
+          <option value="V5">El período orbital es proporcional al cubo de la distancia media al Sol</option>
+          <option value="F">El período orbital es inversamente proporcional a la distancia media al Sol</option>
+        </select>
+
+        <!-- Pregunta 6 -->
+        <label for="question6">6. ¿Qué indica la constante de proporcionalidad en la Tercera Ley de Kepler?</label>
+        <select id="question6" name="question6">
+          <option value="">Seleccione una opción</option>
+          <option value="V6">Es la misma para todos los planetas del sistema solar</option>
+          <option value="F">Varía dependiendo del planeta</option>
+          <option value="F">No tiene importancia en la ley</option>
+          <option value="F">Depende de la masa del planeta</option>
+        </select>
+
+        <!-- Pregunta 7 -->
+        <label for="question7">7. ¿Cómo varía la velocidad de un planeta según su distancia al Sol?</label>
+        <select id="question7" name="question7">
+          <option value="">Seleccione una opción</option>
+          <option value="V7">El planeta se mueve más rápido cuando está más cerca del Sol</option>
+          <option value="F">El planeta se mueve más lento cuando está más cerca del Sol</option>
+          <option value="F">La velocidad no depende de la distancia al Sol</option>
+          <option value="F">La velocidad es constante</option>
+        </select>
+
+        <!-- Pregunta 8 -->
+        <label for="question8">8. ¿Qué sucede con el área que recorre un planeta en su órbita, según la Segunda Ley de Kepler?</label>
+        <select id="question8" name="question8">
+          <option value="">Seleccione una opción</option>
+          <option value="F">Áreas diferentes</option>
+          <option value="V8">Áreas iguales</option>
+          <option value="F">No barre ninguna área</option>
+          <option value="F">Depende de la órbita del planeta</option>
+        </select>
+
+        <!-- Pregunta 9 -->
+        <label for="question9">9. Según la Tercera Ley de Kepler, si conocemos el período orbital de un planeta, ¿qué podemos calcular?</label>
+        <select id="question9" name="question9">
+          <option value="">Seleccione una opción</option>
+          <option value="V9">La distancia promedio del planeta al Sol</option>
+          <option value="F">La velocidad orbital del planeta</option>
+          <option value="F">La masa del planeta</option>
+          <option value="F">El tiempo que tarda en rotar sobre su eje</option>
+        </select>
+
+        <!-- Pregunta 10 -->
+        <label for="question10">10. ¿Qué tipo de proporcionalidad describe la Tercera Ley de Kepler entre el período orbital y la distancia promedio al Sol?</label>
+        <select id="question10" name="question10">
+          <option value="">Seleccione una opción</option>
+          <option value="F">Proporcionalidad cuadrática</option>
+          <option value="V10">Proporcionalidad directa</option>
+          <option value="F">Proporcionalidad inversa</option>
+          <option value="F">Proporcionalidad cúbica</option>
+        </select>
+      </div>
+
+      <div class="button-container">
+        <button class="btn btn-primary" type="submit">Enviar Respuestas</button>
+        <a class="btn btn-secondary" onclick="cancelar()">Cancelar</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+  function updateTimer() {
+  const timerElement = document.getElementById('timer');
+  const duration = 10 * 60 * 1000; // 10 minutos en milisegundos
+  const endTime = Date.now() + duration;
+
+  const timerInterval = setInterval(() => {
+    const remainingTime = endTime - Date.now();
+    if (remainingTime <= 0) {
+      clearInterval(timerInterval);
+      timerElement.textContent = 'Tiempo expirado';
+      submitFormAndClose();
+    } else {
+      const minutes = Math.floor(remainingTime / 60000);
+      const seconds = Math.floor((remainingTime % 60000) / 1000);
+      timerElement.textContent = `Tiempo restante: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+  }, 1000);
+}
+
+function setStartTime() {
+  const startTime = new Date().toISOString();
+  document.getElementById('startTime').value = startTime;
+  updateTimer();
+}
+
+function setFinishTime() {
+  const finishTime = new Date().toISOString();
+  document.getElementById('finishTime').value = finishTime;
+}
+
+function submitFormAndClose() {
+  setFinishTime();
+  const form = document.getElementById('popupForm');
+  alert('El tiempo ha expirado. Sus respuestas han sido enviadas.');
+  form.submit();
+}
+
+document.addEventListener('DOMContentLoaded', setStartTime);
+
+document.getElementById('popupForm').addEventListener('submit', setFinishTime);
+
+function cancelar() {
+  document.getElementById('popupForm').reset();
+  window.location.href = '/';
+}
+
+
+</script>

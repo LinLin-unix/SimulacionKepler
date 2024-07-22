@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kepler</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200&display=swap" rel="stylesheet">
+
+    <!-- CSS adicional -->
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="stylesheet" href="/public/css/styles.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <style>
+      #firstLawPopupContainer,
+      #secondLawPopupContainer,
+      #thirdLawPopupContainer {
+        display: none;
+      }
+    </style>
+    
+</head>
+
+<body>
+
+    
+    {{> navigation}}
+    {{> message}}
+    
+        {{{body}}}
+
+  <footer class="footer">
+    <p>Copyright (c) 2024 Wilder Lopez Matos - Todos los derechos reservados</p>
+  </footer>
+  
+    <!-- Scripts para control de modales y otros -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script>
+      if (!window.jQuery) {
+        document.write('<script src="/assets/js/vendor/jquery-2.2.4.min.js"><\/script>');
+      }
+    </script>
+    <script src="/public/js/functions-min.js"></script>
+
+    <script src="/public/js/script.js"></script>
+</body>
+
+</html>

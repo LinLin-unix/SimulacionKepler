@@ -1,0 +1,155 @@
+<!-- Popup container para la simulación del sistema solar -->
+<div id="solarSystemPopupContainer" class="popup-container">
+  <div class="popup-content">
+    <h2>Simulación de la Primera Ley de Kepler - Mini Sistema Solar</h2>
+    <p>e: Excentricidad de cada planeta, la excentricidad esta comprendida entre 0 y 1</p>
+    <canvas id="solarSystemSimulationCanvas" class="simulation-canvas" width="1200" height="500"></canvas>
+    <button id="solarSystemClosePopupBtn" class="close-btn">Finalizar Simulación</button>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const solarSystemPopupContainer = document.getElementById('solarSystemPopupContainer');
+  const solarSystemSimulationCanvas = document.getElementById('solarSystemSimulationCanvas');
+  const ctxSolarSystem = solarSystemSimulationCanvas.getContext('2d');
+  const sunRadius = 40; // Radio del sol
+
+  // Definir los datos de los planetas
+  const planetsData = [
+    { semiMajorAxis: 200, eccentricity: 0.1, color: '#FF5733', angle: 0 },
+    { semiMajorAxis: 250, eccentricity: 0.3, color: '#33FF57', angle: 0 },
+    { semiMajorAxis: 300, eccentricity: 0.5, color: '#5733FF', angle: 0 },
+    { semiMajorAxis: 350, eccentricity: 0.7, color: '#33FFFF', angle: 0 },
+    { semiMajorAxis: 400, eccentricity: 0.9, color: '#FF33FF', angle: 0 },
+    { semiMajorAxis: 450, eccentricity: 0.95, color: '#FFFF33', angle: 0 }
+  ];
+
+  // Dibujar el Sol en el centro de la simulación
+  function drawSun(focusX, focusY) {
+    ctxSolarSystem.beginPath();
+    ctxSolarSystem.arc(focusX, focusY, sunRadius, 0, Math.PI * 2);
+    ctxSolarSystem.fillStyle = 'yellow';
+    ctxSolarSystem.fill();
+  }
+
+  // Función para calcular la posición en una elipse dadas la distancia focal, semi-eje mayor y ángulo
+  function getPositionOnEllipse(semiMajorAxis, semiMinorAxis, angle) {
+    const centerX = solarSystemSimulationCanvas.width / 2;
+    const centerY = solarSystemSimulationCanvas.height / 2;
+
+    const x = centerX + semiMajorAxis * Math.cos(angle);
+    const y = centerY + semiMinorAxis * Math.sin(angle);
+
+    return { x, y };
+  }
+
+// Dibujar las órbitas elípticas de los planetas
+function drawOrbitsAndFoci() {
+  planetsData.forEach(planet => {
+    const { semiMajorAxis, eccentricity, color } = planet;
+    const semiMinorAxis = semiMajorAxis * Math.sqrt(1 - eccentricity * eccentricity);
+    const focusDistance = semiMajorAxis * eccentricity;
+
+    const centerX = solarSystemSimulationCanvas.width / 2;
+    const centerY = solarSystemSimulationCanvas.height / 2;
+    const focus1X = centerX - focusDistance;
+    const focus2X = centerX + focusDistance;
+
+    // Dibujar la órbita
+    ctxSolarSystem.beginPath();
+    ctxSolarSystem.ellipse(centerX, centerY, semiMajorAxis, semiMinorAxis, 0, 0, 2 * Math.PI);
+    ctxSolarSystem.strokeStyle = color;
+    ctxSolarSystem.stroke();
+
+    // Dibujar el Sol y la leyenda para el primer planeta
+    if (planet === planetsData[1]) {
+      // Dibujar el Sol en Foco 1
+      drawSun(focus1X, centerY);
+
+      // Dibujar el círculo del color del planeta
+      ctxSolarSystem.beginPath();
+      ctxSolarSystem.arc(solarSystemSimulationCanvas.width - 380, solarSystemSimulationCanvas.height - 20, 5, 0, Math.PI * 2);
+      ctxSolarSystem.fillStyle = 'yellow';
+      ctxSolarSystem.fill();
+
+      // Dibujar la leyenda en la parte inferior derecha
+      ctxSolarSystem.font = "11.9px Arial";
+      ctxSolarSystem.fillStyle = 'white';
+      ctxSolarSystem.fillText(`El sol esta ubicado en el Foco 1 de todos los planetas que lo orbitan`, solarSystemSimulationCanvas.width - 360, solarSystemSimulationCanvas.height - 15);
+    }
+  });
+}
+
+// Dibujar la excentricidad de cada planeta
+function drawEccentricities() {
+  const offset = 20; // Espacio entre el planeta y su etiqueta
+
+  planetsData.forEach(planet => {
+    const { semiMajorAxis, eccentricity, color, angle } = planet;
+    const semiMinorAxis = semiMajorAxis * Math.sqrt(1 - eccentricity * eccentricity);
+    const { x, y } = getPositionOnEllipse(semiMajorAxis, semiMinorAxis, angle);
+
+    // Dibujar un pequeño círculo del color del planeta
+    ctxSolarSystem.beginPath();
+    ctxSolarSystem.arc(x + offset, y - offset, 5, 0, Math.PI * 2);
+    ctxSolarSystem.fillStyle = color;
+    ctxSolarSystem.fill();
+
+    // Dibujar la excentricidad al lado del círculo
+    ctxSolarSystem.font = "12px Arial";
+    ctxSolarSystem.fillStyle = 'white';
+    ctxSolarSystem.fillText(`e = ${eccentricity.toFixed(2)}`, x + offset + 10, y - offset + 5);
+  });
+}
+
+// Dibujar la simulación completa del sistema solar
+function drawSolarSystemSimulation() {
+  ctxSolarSystem.clearRect(0, 0, solarSystemSimulationCanvas.width, solarSystemSimulationCanvas.height);
+
+  drawOrbitsAndFoci();
+  drawEccentricities();
+
+  planetsData.forEach(planet => {
+    const { semiMajorAxis, eccentricity, color } = planet;
+    const semiMinorAxis = semiMajorAxis * Math.sqrt(1 - eccentricity * eccentricity);
+
+    // Calcular la posición actual del planeta en la elipse
+    const { x, y } = getPositionOnEllipse(semiMajorAxis, semiMinorAxis, planet.angle);
+
+    // Dibujar el planeta
+    ctxSolarSystem.beginPath();
+    ctxSolarSystem.arc(x, y, 10, 0, Math.PI * 2);
+    ctxSolarSystem.fillStyle = color;
+    ctxSolarSystem.fill();
+
+    // Actualizar el ángulo del planeta para el siguiente intervalo
+    planet.angle += calculateAngularSpeed(planet.semiMajorAxis);
+  });
+
+  requestAnimationFrame(drawSolarSystemSimulation);
+}
+  // Función para calcular la velocidad angular en función del semi-eje mayor
+  function calculateAngularSpeed(semiMajorAxis) {
+    const k = 5 ; // Constante de proporcionalidad ajustable
+    return k / Math.pow(semiMajorAxis, 1.5); // La velocidad angular está inversamente relacionada con el semieje mayor elevado a 3/2
+  }
+
+  // Inicializar la simulación al cargar la página
+  function openSolarSystemPopup() {
+    solarSystemPopupContainer.style.display = 'block'; // Mostrar la ventana emergente
+    drawSolarSystemSimulation();
+  }
+
+  // Evento para cerrar la simulación
+  function closeSolarSystemPopup() {
+    solarSystemPopupContainer.style.display = 'none';
+    window.location.href = '/';
+  }
+  document.getElementById('solarSystemClosePopupBtn').addEventListener('click', closeSolarSystemPopup);
+
+  // Llamar a la función al cargar la página
+  window.addEventListener('load', openSolarSystemPopup);
+});
+
+</script>

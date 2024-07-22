@@ -1,0 +1,233 @@
+<!-- Popup container para la simulación de la Segunda Ley de Kepler -->
+<div id="secondLawPopupContainer" class="popup-container">
+  <div class="popup-content">
+    <h2>Simulación de la Segunda Ley de Kepler</h2>
+    <div class="distance-control">
+      <p>Podras agreagar hasta 6 planetas y las distancias en Unidades Astronomicas (UA) estan comprendidas entre 0.1 a 1000</p>
+      <label for="distanceInput">Distancia al Sol (UA):</label>
+      <input type="number" id="distanceInput" min="0.1" max="1000" step="0.01" placeholder="Distancia en UA"  style="color: #004cff;"required>
+    </div>
+
+    <button id="addSecondPlanetBtn">Agregar Planeta</button>
+    <label><input type="checkbox" id="slowMotion" onchange="toggleSlowMotion()"> Movimiento lento</label>
+    <canvas id="secondLawSimulationCanvas" class="simulation-canvas" width="1200" height="700"></canvas>
+    <button id="secondLawClosePopupBtn" class="close-btn">Finalizar Simulación</button>
+  </div>
+</div>
+
+<script>
+const secondLawPopupContainer = document.getElementById('secondLawPopupContainer');
+const secondLawSimulationCanvas = document.getElementById('secondLawSimulationCanvas');
+const ctx = secondLawSimulationCanvas.getContext('2d');
+const planetsData = [];
+const colors = ['#FF5733', '#33FF57', '#5733FF', '#33FFFF', '#FF33FF'];
+const sunEccentricity = 0.7; // Excentricidad del sol (para desplazarlo a uno de los focos)
+const minDistanceFromSun = 0.1;
+const maxDistanceFromSun = 1000; // Distancia mínima aceptable entre el planeta y el sol en UA
+const maxOrbitSize = 500; // Tamaño máximo para las órbitas en el lienzo
+const maxPlanets = 6; // Límite máximo de planetas
+let numPlanetsAdded = 0; 
+let startTime = new Date().getTime(); // Tiempo de inicio para el cálculo del área
+let slowMotion = false; // Estado inicial del movimiento lento
+
+function openSecondLawPopup() {
+  secondLawPopupContainer.style.display = 'flex';
+}
+
+function closeSecondLawPopup() {
+  secondLawClosePopupBtn.style.display = 'none';
+  window.location.href = '/';
+}
+document.getElementById('secondLawClosePopupBtn').addEventListener('click', closeSecondLawPopup);
+
+// Función para alternar el estado de movimiento lento
+function toggleSlowMotion() {
+  slowMotion = !slowMotion; // Cambiar el estado de slowMotion
+}
+
+// Función para calcular la velocidad angular en función de la distancia
+function calculateAngularSpeed(distance) {
+  const G = 1; // Constante gravitacional (ajustada para la simulación)
+  const M = 1; // Masa del Sol (ajustada para la simulación)
+  const v = Math.sqrt(G * M / distance); // Velocidad tangencial
+  const angularSpeed = v / distance; // Velocidad angular ω = v / r
+  return angularSpeed;
+}
+
+// Función para calcular el momento angular
+function calculateAngularMomentum(distance, angularSpeed) {
+  const mass = 1; // Masa del planeta (ajustada para la simulación)
+  const radius = distance; // Radio vector
+  const momentum = mass * radius * radius * angularSpeed; // Momento angular L = m * r² * ω
+  return momentum;
+}
+
+// Función para dibujar la simulación
+function drawSecondLawSimulation() {
+  ctx.clearRect(0, 0, secondLawSimulationCanvas.width, secondLawSimulationCanvas.height);
+  
+  // Dibujar el sol
+  const sunX = secondLawSimulationCanvas.width / 2 + 50 * sunEccentricity; // Posición x del sol (foco)
+  const sunY = secondLawSimulationCanvas.height / 2;
+  ctx.beginPath();
+  ctx.arc(sunX, sunY, 20, 0, Math.PI * 2); // Aumentar el radio del sol para que sea más grande
+  ctx.fillStyle = 'yellow';
+  ctx.fill();
+
+  // Dibujar los planetas y calcular el área barrida
+  planetsData.forEach((planet, index) => {
+    const { distance, angle, color } = planet;
+    const scaledDistance = distance * (maxOrbitSize / Math.max(...planetsData.map(p => p.distance))) * 0.5; // Ajustar la escala del tamaño de los planetas
+    const a = scaledDistance; // Semieje mayor
+    const b = a * planet.eccentricity; // Semieje menor
+    const x0 = sunX + a * Math.cos(angle);
+    const y0 = sunY + b * Math.sin(angle);
+
+    // Calcular el área barrida por intervalo de tiempo
+    const angularSpeed = calculateAngularSpeed(distance);
+    const deltaTheta = angularSpeed * 0.1; // Incremento en ángulo para el intervalo de tiempo
+    const areaIncrement = 0.5 * distance * distance * deltaTheta; // Incremento de área barrida
+    planet.sweptArea += areaIncrement; // Sumar el área barrida actual
+
+    // Mostrar el área barrida al usuario
+    ctx.font = "20px Arial";
+    ctx.fillStyle = 'white';
+    ctx.fillText(`Área barrida: ${planet.sweptArea.toFixed(2)} UA^2`, 20, 20 * (index + 1));
+
+    // Dibujar el radio vector
+    ctx.beginPath();
+    ctx.moveTo(sunX, sunY);
+    ctx.lineTo(x0, y0);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.stroke();
+
+    // Dibujar la órbita del planeta
+    ctx.beginPath();
+    ctx.ellipse(sunX, sunY, a, b, 0, 0, 2 * Math.PI);
+    ctx.setLineDash([5, 5]); // Establecer el patrón de línea punteada
+    ctx.strokeStyle = color;
+    ctx.stroke();
+    ctx.setLineDash([]); // Restaurar el patrón de línea sólida
+
+    // Dibujar el planeta
+    ctx.beginPath();
+    ctx.arc(x0, y0, 10, 0, Math.PI * 2); // Aumentar el tamaño del planeta
+    ctx.fillStyle = color;
+    ctx.fill();
+  });
+
+  // Mostrar mensajes explicativos
+  showMessages();
+}
+
+// Función para mostrar mensajes informativos
+function showMessages() {
+  const messageBox = document.getElementById('messageBox');
+  const timeNow = new Date().getTime();
+  
+  planetsData.forEach((planet, index) => {
+    const { distance, angle, color } = planet;
+    const currentDistance = distance * Math.sqrt(1 - planet.eccentricity ** 2) / (1 + planet.eccentricity * Math.cos(angle));
+    const angularSpeed = calculateAngularSpeed(currentDistance);
+    const momentum = calculateAngularMomentum(currentDistance, angularSpeed);
+
+    const perihelionDistance = distance * (1 - planet.eccentricity);
+    const aphelionDistance = distance * (1 + planet.eccentricity);
+
+    // Dibujar círculo del color del planeta
+    ctx.beginPath();
+    ctx.arc(20, secondLawSimulationCanvas.height - 20 * (index + 1) - 7, 5, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.closePath();
+
+    let message = '';
+    if (currentDistance <= perihelionDistance + 0.1) {
+      message = 'El planeta está en perihelio, moviéndose más rápido, cerca del Sol. ';
+    } else if (currentDistance >= aphelionDistance - 0.1) {
+      message = 'El planeta está en afelio, moviéndose más lentamente, cerca del Sol. ';
+    } else {
+      message = `Velocidad areolar constante: ${(0.5 * currentDistance * currentDistance * angularSpeed).toFixed(2)} UA²/s `;
+    }
+    message += `| Momento angular conserva: ${momentum.toFixed(2)} UA²·kg/s`;
+
+    // Mostrar el mensaje en la pantalla
+    ctx.font = "18px Arial";
+    ctx.fillStyle = 'white';
+    ctx.fillText(message, 30, secondLawSimulationCanvas.height - 20 * (index + 1));
+  });
+}
+
+
+// Función para agregar un planeta
+function addPlanet() {
+  if (numPlanetsAdded >= maxPlanets) {
+    alert('Ya has alcanzado el límite de planetas que puedes agregar (6 planetas).');
+    return;
+  }
+
+  const distance = parseFloat(document.getElementById('distanceInput').value);
+  if (distance <= minDistanceFromSun || distance > maxDistanceFromSun) {
+    if (distance <= minDistanceFromSun) {
+      alert('La distancia al sol debe ser mayor que ' + minDistanceFromSun + ' UA');
+    } else {
+      alert('La distancia al sol no puede ser mayor que ' + maxDistanceFromSun + ' UA');
+    }
+    return;
+  }
+
+  const angle = Math.random() * Math.PI * 2;
+  const eccentricity = Math.random() * 0.8 + 0.2; // Excentricidad entre 0.2 y 1.0
+  const color = colors[numPlanetsAdded % colors.length];
+  const planet = { distance, angle, eccentricity, color, sweptArea: 0 }; // Inicializar sweptArea en 0
+  planetsData.push(planet);
+  numPlanetsAdded++;
+
+  drawSecondLawSimulation();
+}
+
+document.getElementById('addSecondPlanetBtn').addEventListener('click', addPlanet);
+window.addEventListener('load', openSecondLawPopup);
+
+// Función para mostrar el mensaje de confirmación
+function showConfirmationMessage() {
+  const confirmationMessage = document.getElementById('confirmationMessage');
+  confirmationMessage.innerText = 'Áreas barridas iguales en tiempos iguales | Momento angular constante';
+  confirmationMessage.style.display = 'block';
+  setTimeout(() => {
+    confirmationMessage.style.display = 'none';
+  }, 2000);
+}
+
+// Función para verificar la constancia de las áreas barridas y el momento angular
+function verifySweptAreas() {
+  let areAreasEqual = true;
+  planetsData.forEach(planet => {
+    const { distance } = planet;
+    const angularSpeed = calculateAngularSpeed(distance);
+    const areaRate = 0.5 * distance * distance * angularSpeed; // Tasa de área barrida
+    const momentum = calculateAngularMomentum(distance, angularSpeed);
+
+    if (Math.abs(areaRate - planet.sweptArea) > 0.1) {
+      areAreasEqual = false;
+    }
+  });
+
+  if (areAreasEqual) {
+    showConfirmationMessage();
+  }
+}
+
+// Actualizar la simulación cada 100 milisegundos
+setInterval(() => {
+  ctx.clearRect(0, 0, secondLawSimulationCanvas.width, secondLawSimulationCanvas.height);
+  planetsData.forEach(planet => {
+    const distance = planet.distance * Math.sqrt(1 - planet.eccentricity ** 2) / (1 + planet.eccentricity * Math.cos(planet.angle));
+    planet.angle += calculateAngularSpeed(distance) * (slowMotion ? 0.01 : 1); // Incremento del ángulo por el intervalo de tiempo, ajustado por slowMotion
+  });
+  drawSecondLawSimulation();
+  verifySweptAreas();
+}, 100);
+
+
+</script>

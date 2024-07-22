@@ -1,0 +1,38 @@
+<div id="popup" class="popup">
+  <div class="popup-content">
+    <h1>Felicitaciones para los siguientes Participantes</h1>
+    <table id="tablaMejoresPuntuaciones">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Puntaje Total</th>
+          <th>Tiempo empleado</th>
+          <th>Precisión</th>
+          <th>Comprensión</th>
+          <th>Retroalimentación</th>
+          <th>Número de intentos</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each peakScores}}
+          <tr>
+            <td>{{user}}</td>
+            <td>{{totalScore}}</td>
+            <td>{{timeTaken}} seg</td>
+            <td>{{precision}} %</td>
+            <td>{{comprehension}} %</td>
+            <td>{{feedback}}</td>
+            <td>{{attempts}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    <button class="close-btn" id="CloseBestScores">Cerrar</button>
+  </div>
+</div>
+
+<script>
+  document.getElementById("CloseBestScores").addEventListener("click", function() {
+    window.location.href = "/";
+  });
+</script>

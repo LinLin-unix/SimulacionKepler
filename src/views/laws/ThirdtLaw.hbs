@@ -1,0 +1,161 @@
+<!-- Popup container para la simulación de la Tercera Ley de Kepler -->
+<div id="thirdLawPopupContainer" class="popup-container">
+  <div class="popup-content">
+    <h2>Simulación de la Tercera Ley de Kepler</h2>
+    <div class="distance-control">
+      <p>Agrega planetas y observa su período orbital con la distancia media al Sol.</p>
+      <p>Donde: (P:periodo - a: distancia media - k:constante - Max de 6 planetas a agregar)</p>
+      <label for="thirdLawDistanceInput">Distancia media al Sol (UA) entre (10 - 100):</label>
+      <input type="number" id="thirdLawDistanceInput" min="0.1" max="600" step="0.01" placeholder="Distancia en UA" style="color: #004cff;"
+        required>
+    </div>
+    <button id="addThirdLawPlanetBtn">Agregar Planeta</button>
+    <canvas id="thirdLawSimulationCanvas" class="simulation-canvas" width="1200" height="700"></canvas>
+    <button id="thirdLawClosePopupBtn" class="close-btn">Finalizar Simulación</button>
+  </div>
+</div>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const thirdLawPopupContainer = document.getElementById('thirdLawPopupContainer');
+    const thirdLawSimulationCanvas = document.getElementById('thirdLawSimulationCanvas');
+    const ctxThirdLaw = thirdLawSimulationCanvas.getContext('2d');
+    const thirdLawPlanetsData = [];
+    const thirdLawColors = ['#FF5733', '#33FF57', '#5733FF', '#33FFFF', '#FF33FF', '#FFFF33'];
+    const maxThirdLawPlanets = 6; // Límite máximo de planetas
+    let numThirdLawPlanetsAdded = 0;
+    const canvasMargin = 1; // Margen para ajustar la escala
+    const k = 1; // Constante ajustable
+
+    thirdLawSimulationCanvas.width = 1200; // Ancho del canvas
+    thirdLawSimulationCanvas.height = 700; // Alto del canvas
+
+    // Abrir la simulación de la tercera ley
+    function openThirdLawPopup() {
+      thirdLawPopupContainer.style.display = 'flex';
+    }
+
+    // Cerrar la simulación de la tercera ley
+    function closeThirdLawPopup() {
+      thirdLawPopupContainer.style.display = 'none';
+      window.location.href = '/';
+    }
+    document.getElementById('thirdLawClosePopupBtn').addEventListener('click', closeThirdLawPopup);
+
+    // Función para calcular el período orbital en función del semieje mayor
+    function calculateOrbitalPeriod(semiMajorAxis) {
+      return k * Math.pow(semiMajorAxis, 1.5); // P = k * a^(3/2)
+    }
+
+    // Función para escalar las distancias al tamaño del canvas
+    function scaleDistance(distance) {
+      const maxDistance = 120; // Ajuste para máxima distancia en UA para el canvas
+      const canvasSize = Math.min(thirdLawSimulationCanvas.width, thirdLawSimulationCanvas.height) / 2;
+      return (distance / maxDistance) * (canvasSize - canvasMargin); // Ajuste con margen
+    }
+
+    // Dibujar la simulación de la tercera ley
+    function drawThirdLawSimulation() {
+      ctxThirdLaw.clearRect(0, 0, thirdLawSimulationCanvas.width, thirdLawSimulationCanvas.height);
+
+      // Dibujar el sol
+      const sunX = thirdLawSimulationCanvas.width / 2;
+      const sunY = thirdLawSimulationCanvas.height / 2;
+      ctxThirdLaw.beginPath();
+      ctxThirdLaw.arc(sunX, sunY, 20, 0, Math.PI * 2); // Radio del Sol ajustado
+      ctxThirdLaw.fillStyle = 'yellow';
+      ctxThirdLaw.fill();
+
+      // Dibujar las órbitas de los planetas con gradientes
+      thirdLawPlanetsData.forEach((planet) => {
+        const { semiMajorAxis, angle } = planet;
+        const orbitRadius = scaleDistance(semiMajorAxis);
+
+        ctxThirdLaw.beginPath();
+        const gradient = ctxThirdLaw.createRadialGradient(sunX, sunY, 0, sunX, sunY, orbitRadius);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0.2)');
+        ctxThirdLaw.strokeStyle = gradient;
+        ctxThirdLaw.lineWidth = 1;
+        ctxThirdLaw.ellipse(sunX, sunY, orbitRadius, orbitRadius * 0.7, 0, 0, Math.PI * 2); // Órbita elíptica
+        ctxThirdLaw.stroke();
+      });
+
+      // Dibujar los planetas
+      thirdLawPlanetsData.forEach((planet) => {
+        const { semiMajorAxis, angle, color, period } = planet;
+        const orbitRadius = scaleDistance(semiMajorAxis); // Usar la función de escala
+        const x = sunX + orbitRadius * Math.cos(angle);
+        const y = sunY + orbitRadius * 0.7 * Math.sin(angle); // Considerando la elipticidad
+
+        // Dibujar el planeta con sombreado y tamaño variable
+        const planetSize = Math.max(4, 12 - semiMajorAxis / 10);
+        ctxThirdLaw.beginPath();
+        ctxThirdLaw.arc(x, y, planetSize, 0, Math.PI * 2); // Tamaño del planeta ajustado
+        ctxThirdLaw.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctxThirdLaw.shadowBlur = 5;
+        ctxThirdLaw.fillStyle = color;
+        ctxThirdLaw.fill();
+        ctxThirdLaw.shadowColor = 'transparent'; // Restaurar sombra transparente para otros elementos
+
+        // Mostrar información del período
+        ctxThirdLaw.font = "20px Arial";
+        ctxThirdLaw.fillStyle = 'white';
+        ctxThirdLaw.fillText(`P = ${period.toFixed(2)} años`, x + 15, y - 15);
+
+        // Actualizar el ángulo del planeta para el siguiente intervalo
+        planet.angle += 0.5 / period; // Ajustar la velocidad en función del período
+      });
+
+      // Mostrar la leyenda en la pantalla
+      let offsetY = 30;
+      thirdLawPlanetsData.forEach((planet, index) => {
+        const { color, semiMajorAxis, period } = planet;
+        const offsetX = 30;
+
+        // Dibujar círculo de color en la leyenda
+        ctxThirdLaw.beginPath();
+        ctxThirdLaw.arc(offsetX, offsetY + index * 30, 10, 0, Math.PI * 2);
+        ctxThirdLaw.fillStyle = color;
+        ctxThirdLaw.fill();
+
+        // Mostrar información del planeta en la leyenda
+        ctxThirdLaw.font = "20px Arial";
+        ctxThirdLaw.fillStyle = 'white';
+        ctxThirdLaw.fillText(`Distancia Media = ${semiMajorAxis.toFixed(2)} UA | P: k * a^(3/2) = ${period.toFixed(2)} años | P² ∝ a³`, offsetX + 20, offsetY + index * 30 + 5);
+      });
+
+      requestAnimationFrame(drawThirdLawSimulation);
+    }
+
+    // Función para agregar un planeta
+    function addThirdLawPlanet() {
+      if (numThirdLawPlanetsAdded >= maxThirdLawPlanets) {
+        alert('Ya has alcanzado el límite de planetas que puedes agregar (6 planetas).');
+        return;
+      }
+
+      const semiMajorAxis = parseFloat(document.getElementById('thirdLawDistanceInput').value);
+      if (isNaN(semiMajorAxis) || semiMajorAxis < 10 || semiMajorAxis > 100) {
+        alert('Por favor, ingresa una distancia válida entre 10 y 100.');
+        return;
+      }
+
+      const angle = Math.random() * Math.PI * 2; // Ángulo inicial aleatorio
+      const color = thirdLawColors[numThirdLawPlanetsAdded % thirdLawColors.length];
+      const period = calculateOrbitalPeriod(semiMajorAxis); // Calcular el período orbital
+
+      const planet = { semiMajorAxis, angle, color, period };
+      thirdLawPlanetsData.push(planet);
+      numThirdLawPlanetsAdded++;
+
+      drawThirdLawSimulation();
+    }
+
+    document.getElementById('addThirdLawPlanetBtn').addEventListener('click', addThirdLawPlanet);
+
+    // Inicializar la simulación al cargar la página
+    window.addEventListener('load', openThirdLawPopup);
+  });
+</script>

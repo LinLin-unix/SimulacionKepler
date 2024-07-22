@@ -1,0 +1,38 @@
+{{#if success.length}}
+<div class="alert-container">
+    <div class="alert alert-success">
+        {{success}}
+        <span class="alert-close" onclick="closeAlert(this)">×</span>
+    </div>
+</div>
+{{/if}}
+
+{{#if error_msg}}
+<div class="alert-container">
+    <div class="alert alert-danger">
+        {{error_msg}}
+        <span class="alert-close" onclick="closeAlert(this)">×</span>
+    </div>
+</div>
+{{/if}}
+
+{{#if message.length}}
+<div class="alert-container">
+    <div class="alert alert-danger">
+        {{message}}
+        <span class="alert-close" onclick="closeAlert(this)">×</span>
+    </div>
+</div>
+{{/if}}
+
+{{#if errors}}
+    {{#each errors}}
+        <div class="alert-container">
+            <div class="alert alert-danger">
+                {{text}}
+                <span class="alert-close" onclick="closeAlert(this)">&times;</span>
+            </div>
+        </div>
+    {{/each}}
+{{/if}}
+
